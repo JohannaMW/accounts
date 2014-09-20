@@ -37,6 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'chartit',
+    'json'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -90,6 +92,10 @@ LOGIN_REDIRECT_URL = 'profile'
 STATIC_URL = '/static/'
 
 LOGIN_URL = 'login'
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, "static", *MEDIA_URL.strip("/").split("/"))
 
 try:
     from local_settings import *

@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from accounting.forms import EmailUserCreationForm, ExpenseForm, IncomeForm
+from accounting.forms import EmailUserCreationForm, ExpenseForm, IncomeForm, SavingForm
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import authenticate, login
 from accounting.models import Expense, Income, IncomeType, Saving, Category
 import datetime
+from chartit import DataPool, Chart
 
 def home(request):
     return render(request, 'home.html', {})
@@ -25,7 +26,6 @@ def dashboard(request):
     total = total_income - total_expenses
     data = {"total_income" : total_income, "total_expenses" : total_expenses, "total" : total}
     return render(request, "dashboard.html", data)
-
 
 def register(request):
     # let's user register
@@ -118,3 +118,59 @@ def add_income(request):
         form = IncomeForm()
     data = {'form': form}
     return render(request, 'Income/add_income.html', data)
+
+@login_required
+def add_saving(request):
+    # lets user add a saving plan
+    if request.method == "POST":
+        form = SavingForm(request.POST)
+        if form.is_valid():
+            if form.save():
+                return redirect("/home/")
+    else:
+        form = SavingForm()
+    data = {'form': form}
+    return render(request, 'Saving/add_saving.html', data)
+
+@login_required
+def saving_plans(request):
+    # lists all saving plans
+    plans = Saving.objects.filter(user=request.user).order_by('-from_date')
+    return render(request, 'Saving/saving_plans.html', {'plans': plans})
+
+@login_required
+def chart_exp_month(request):
+    # creates a chart of monthly spendings
+    #Step 1: Create a DataPool with the data we want to retrieve.
+    month = datetime.date.today().month
+    expensedata = \
+        DataPool(
+           series=
+            [{'options': {
+               'source': Expense.objects.filter(date__month=month,
+                           user=request.user)},
+              'terms': [
+                'date',
+                'amount']}
+             ])
+
+    #Step 2: Create the Chart object
+    cht = Chart(
+            datasource = expensedata,
+            series_options =
+              [{'options':{
+                  'type': 'line',
+                  'stacking': False},
+                'terms':{
+                  'date': [
+                    'amount']
+                  }}],
+            chart_options =
+              {'title': {
+                   'text': 'Expenses in {}'.format(month)},
+               'xAxis': {
+                    'title': {
+                       'text': 'Date'}}})
+
+    #Step 3: Send the chart object to the template.
+    return render(request, "Charts/chart_exp_month.html", {'expensechart': cht})

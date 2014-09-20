@@ -1,5 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.conf.urls.static import static
+from accounts import settings
 
 urlpatterns = patterns('',
     url(r'^home/$', 'accounting.views.home', name='home'),
@@ -10,6 +12,8 @@ urlpatterns = patterns('',
     url(r'^expenses/hist$', 'accounting.views.expenses_hist', name= 'expenses_hist'),
     url(r'^expenses/categories/$', 'accounting.views.expenses_cat', name= 'expenses_categories'),
     url(r'^expenses/categories/(?P<category_id>\w+)/$', 'accounting.views.expenses_by_cat', name= 'expenses_by_categories'),
+    # charts
+    url(r'^charts/expenses/month$', 'accounting.views.chart_exp_month', name='chart_exp_month'),
 
     #handling income
     url(r'^income/add$', 'accounting.views.add_income', name='add_income'),
@@ -18,11 +22,16 @@ urlpatterns = patterns('',
     url(r'^income/type/(?P<type_id>\w+)/$', 'accounting.views.income_by_type', name= 'income_by_type'),
 
     #handling savings
-    url(r'^saving/add$', 'accounting.views.add_saving', name='add_saving'),
+    url(r'^savingplan/add$', 'accounting.views.add_saving', name='add_saving'),
+    url(r'^savingplans/$', 'accounting.views.saving_plans', name='saving_plans'),
 
     # User handling
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
     url(r'^register/$', 'accounting.views.register', name='register'),
     url(r'^admin/', include(admin.site.urls)),
+
 )
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
