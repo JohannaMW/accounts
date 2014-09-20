@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}
+Expenses
+{% endblock %}
+
+{% block content %}
+{% for expense in expenses.all %}
+    {% for exp in expense %}
+    <ul>
+   <li>{{ exp.name }}, {{ exp.amount }}</li>
+    </ul>
+    {% endfor %}
+    {% endfor %}
+
+{% endblock %}
