@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}
+Income Historical
+{% endblock %}
+
+{% block content %}
+    <h1> Your incomes</h1>
+      <table style="width:100%">
+    <tr>
+    <th>Description</th>
+    <th>Type</th>
+    <th>Date</th>
+    <th>Amount</th>
+  </tr>
+{% for income in incomes.all %}
+  <tr>
+    <td>{{ income.name }}</td>
+    <td>{{ income.type }}</td>
+    <td>{{ income.date }}</td>
+    <td>{{ income.amount }}</td>
+  </tr>
+    {% endfor %}
+       </table>
+
+{% endblock %}

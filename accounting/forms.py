@@ -17,5 +17,13 @@ class ExpenseForm(ModelForm):
      class Meta:
          model = Expense
 
+class IncomeForm(ModelForm):
 
+     class Meta:
+         model = Income
+
+class SavingForm(ModelForm):
+
+     class Meta:
+         model = Saving
 

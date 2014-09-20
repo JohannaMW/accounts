@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}
+Income Types
+{% endblock %}
+
+{% block content %}
+{% for type in types %}
+    <ul>
+   <li><a href="{% url 'income_by_type' type.id %}">{{ type.name }}</a></li>
+    </ul>
+    {% endfor %}
+
+{% endblock content %}

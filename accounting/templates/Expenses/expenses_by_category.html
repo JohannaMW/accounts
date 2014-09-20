@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}
+Expenses by Category
+{% endblock %}
+
+{% block content %}
+    <h1> Your expenses in {{ category.name }}</h1>
+      <table style="width:100%">
+    <tr>
+    <th>Description</th>
+    <th>Date</th>
+    <th>Amount</th>
+  </tr>
+{% for expense in expenses.all %}
+  <tr>
+    <td>{{ expense.name }}</td>
+    <td>{{ expense.date }}</td>
+    <td>{{ expense.amount }}</td>
+  </tr>
+    {% endfor %}
+       </table>
+
+{% endblock %}
