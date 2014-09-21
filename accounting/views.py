@@ -4,7 +4,7 @@ from accounting.forms import EmailUserCreationForm, ExpenseForm, IncomeForm, Sav
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import authenticate, login
-from accounting.models import Expense, Income, IncomeType, Saving, Category, DailyExpenses, MonthlyExpenses
+from accounting.models import Expense, Income, IncomeType, Saving, Category, DailyExpenses, MonthlyExpenses, DailyIncome, MonthlyIncome
 import datetime
 from chartit import DataPool, Chart
 
@@ -89,6 +89,86 @@ def add_expenses(request):
     return render(request, 'Expenses/add_expenses.html', data)
 
 @login_required
+def chart_inc_month(request, year, month):
+    # creates a chart of monthly spendings
+    #Step 1: Create a DataPool with the data we want to retrieve.
+    #get all expenses for one day
+    inc = DailyIncome.objects.filter(year=year, month=month)
+    if not inc:
+        DailyIncome.create_daily_income(year, month, request.user)
+    incomedata = \
+        DataPool(
+           series=
+            [{'options': {
+               'source': DailyIncome.objects.filter(month=month, year=year,
+                           user=request.user)},
+              'terms': [
+                'day',
+                'amount_income']}
+             ])
+
+    #Step 2: Create the Chart object
+    cht = Chart(
+            datasource = incomedata,
+            series_options =
+              [{'options':{
+                  'type': 'line',
+                  'stacking': False},
+                'terms':{
+                  'day': [
+                    'amount_income']
+                  }}],
+            chart_options =
+              {'title': {
+                   'text': 'Incomes in {}'.format(month)},
+               'xAxis': {
+                    'title': {
+                       'text': 'Day'}}})
+
+    #Step 3: Send the chart object to the template.
+    return render(request, "Charts/chart_inc_month.html", {'incomechart': cht})
+
+@login_required
+def chart_inc_year(request, year):
+    # creates a chart of annual income
+    #Step 1: Create a DataPool with the data we want to retrieve.
+    #get all expenses for one day
+    inc = MonthlyIncome.objects.filter(year=year, user=request.user)
+    if not inc:
+        MonthlyIncome.create_monthly_income(year, request.user)
+    incomedata = \
+        DataPool(
+           series=
+            [{'options': {
+               'source': MonthlyIncome.objects.filter(year=year,
+                           user=request.user)},
+              'terms': [
+                'month',
+                'amount_income']}
+             ])
+
+    #Step 2: Create the Chart object
+    cht = Chart(
+            datasource = incomedata,
+            series_options =
+              [{'options':{
+                  'type': 'line',
+                  'stacking': False},
+                'terms':{
+                  'month': [
+                    'amount_income']
+                  }}],
+            chart_options =
+              {'title': {
+                   'text': 'Income in {}'.format(year)},
+               'xAxis': {
+                    'title': {
+                       'text': 'Month'}}})
+
+    #Step 3: Send the chart object to the template.
+    return render(request, "Charts/chart_inc_year.html", {'incomechartyear': cht})
+
+@login_required
 def income_hist(request):
     # lists expenses historically
     incomes = Income.objects.filter(user=request.user).order_by('-date')
@@ -144,21 +224,9 @@ def chart_exp_month(request, year, month):
     # creates a chart of monthly spendings
     #Step 1: Create a DataPool with the data we want to retrieve.
     #get all expenses for one day
-
     exp = DailyExpenses.objects.filter(year=year, month=month)
     if not exp:
-        day = 1
-        while day <= 31:
-            # get all expenses for the day
-            day_expenses = Expense.objects.filter(date__year=year, date__month=month, date__day=day,
-                               user=request.user)
-            amount = 0
-            # add expenses of the day together
-            for expense in day_expenses:
-                amount += expense.amount
-            DailyExpenses.objects.create(year=year, month=month, day= day, amount=amount, user=request.user)
-            day += 1
-
+        DailyExpenses.create_daily_expenses(year, month, request.user)
     expensedata = \
         DataPool(
            series=
@@ -167,7 +235,7 @@ def chart_exp_month(request, year, month):
                            user=request.user)},
               'terms': [
                 'day',
-                'amount']}
+                'amount_expenses']}
              ])
 
     #Step 2: Create the Chart object
@@ -179,7 +247,7 @@ def chart_exp_month(request, year, month):
                   'stacking': False},
                 'terms':{
                   'day': [
-                    'amount']
+                    'amount_expenses']
                   }}],
             chart_options =
               {'title': {
@@ -193,52 +261,62 @@ def chart_exp_month(request, year, month):
 
 @login_required
 def chart_exp_year(request, year):
-    # creates a chart of monthly spendings
-    #Step 1: Create a DataPool with the data we want to retrieve.
-    #get all expenses for one day
-
     exp = MonthlyExpenses.objects.filter(year=year, user=request.user)
     if not exp:
-        month = 1
-        while month <= 12:
-            # get all expenses for the month
-            month_expenses = Expense.objects.filter(date__year=year, date__month=month,
-                               user=request.user)
-            amount = 0
-            # add expenses of the day together
-            for expense in month_expenses:
-                amount += expense.amount
-            MonthlyExpenses.objects.create(year=year, month=month, amount=amount, user=request.user)
-            month += 1
-
+        MonthlyExpenses.create_monthly_expenses(year, request.user)
     expensedata = \
-        DataPool(
+        DataPool(series= [{'options': {'source': MonthlyExpenses.objects.filter(year=year, user=request.user)},
+              'terms': ['month','amount_expenses']}])
+    cht = Chart(
+            datasource = expensedata,
+            series_options = [{'options':{'type': 'line', 'stacking': False}, 'terms':{'month': ['amount_expenses']}}],
+            chart_options =
+              {'title': {'text': 'Expenses in {}'.format(year)}, 'xAxis': {'title': {'text': 'Month'}}})
+
+    #Step 3: Send the chart object to the template.
+    return render(request, "Charts/chart_exp_year.html", {'expensechartyear': cht})
+
+def chart_cashflow_year(request, year):
+    exp = MonthlyExpenses.objects.filter(year=year, user=request.user)
+    if not exp:
+        MonthlyExpenses.create_monthly_expenses(year, request.user)
+    inc = MonthlyIncome.objects.filter(year=year, user=request.user)
+    if not inc:
+        MonthlyIncome.create_monthly_income(year, request.user)
+    ds = DataPool(
            series=
             [{'options': {
-               'source': MonthlyExpenses.objects.filter(year=year,
+                'source': MonthlyIncome.objects.filter(year=year,
                            user=request.user)},
               'terms': [
                 'month',
-                'amount']}
+                'amount_income']},
+             {'options': {
+                'source': MonthlyExpenses.objects.filter(year=year,
+                           user=request.user)},
+              'terms': [
+                  {'month' : 'month'},
+                    'amount']}
              ])
 
-    #Step 2: Create the Chart object
     cht = Chart(
-            datasource = expensedata,
+            datasource = ds,
             series_options =
               [{'options':{
                   'type': 'line',
                   'stacking': False},
                 'terms':{
                   'month': [
+                    'amount'],
+                  'month': [
                     'amount']
                   }}],
             chart_options =
               {'title': {
-                   'text': 'Expenses in {}'.format(year)},
+                   'text': 'Cash Flow {}'.format(year)},
                'xAxis': {
                     'title': {
-                       'text': 'Month'}}})
+                       'text': 'Month number'}}})
+    return render(request, "Charts/chart_cashflow_year.html", {'cashflowchartyear': cht})
 
-    #Step 3: Send the chart object to the template.
-    return render(request, "Charts/chart_exp_year.html", {'expensechartyear': cht})
+

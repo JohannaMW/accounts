@@ -21,6 +21,12 @@ urlpatterns = patterns('',
     url(r'^income/hist$', 'accounting.views.income_hist', name= 'income_hist'),
     url(r'^income/type/$', 'accounting.views.income_type', name= 'income_type'),
     url(r'^income/type/(?P<type_id>\w+)/$', 'accounting.views.income_by_type', name= 'income_by_type'),
+    # charts
+    url(r'^charts/income/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_inc_month', name='chart_inc_month'),
+    url(r'^charts/income/(?P<year>\w+)/$', 'accounting.views.chart_inc_year', name='chart_inc_year'),
+
+    #Charts
+    url(r'^charts/cashflow/(?P<year>\w+)/$', 'accounting.views.chart_cashflow_year', name='chart_cashflow_year'),
 
     #handling savings
     url(r'^savingplan/add$', 'accounting.views.add_saving', name='add_saving'),
