@@ -23,12 +23,14 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Expenses',
+            name='Expense',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=120)),
                 ('amount', models.FloatField()),
-                ('date', models.DateTimeField()),
+                ('date', models.DateField()),
+                ('fix', models.BooleanField(default=False)),
+                ('variable', models.BooleanField(default=True)),
                 ('category', models.ForeignKey(related_name=b'expenses', to='accounting.Category')),
                 ('user', models.ForeignKey(related_name=b'expenses', to=settings.AUTH_USER_MODEL)),
             ],
@@ -60,7 +62,7 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Savings',
+            name='Saving',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('title', models.CharField(max_length=120)),

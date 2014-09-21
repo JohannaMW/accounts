@@ -11,6 +11,7 @@ from chartit import DataPool, Chart
 def home(request):
     return render(request, 'home.html', {})
 
+@login_required
 def dashboard(request):
     month = datetime.date.today().month
     incomes = Income.objects.filter(date__month=month,
@@ -46,7 +47,7 @@ def register(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return redirect("/profile/")
+                    return redirect("/dashboard/")
     else:
         form = EmailUserCreationForm()
 
