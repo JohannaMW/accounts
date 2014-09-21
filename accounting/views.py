@@ -97,33 +97,16 @@ def chart_inc_month(request, year, month):
     incomedata = \
         DataPool(
            series=
-            [{'options': {
-               'source': DailyIncome.objects.filter(month=month, year=year,
-                           user=request.user)},
-              'terms': [
-                'day',
-                'amount_income']}
-             ])
-
-    #Step 2: Create the Chart object
+            [{'options': {'source': DailyIncome.objects.filter(month=month, year=year,
+                           user=request.user)}, 'terms': ['day', 'amount_income']}])
     cht = Chart(
             datasource = incomedata,
             series_options =
-              [{'options':{
-                  'type': 'line',
-                  'stacking': False},
-                'terms':{
-                  'day': [
-                    'amount_income']
-                  }}],
+              [{'options':{ 'type': 'line', 'stacking': False},
+                'terms':{'day': ['amount_income']}}],
             chart_options =
-              {'title': {
-                   'text': 'Incomes in {}'.format(month)},
-               'xAxis': {
-                    'title': {
-                       'text': 'Day'}}})
-
-    #Step 3: Send the chart object to the template.
+              {'title': {'text': 'Incomes in {}'.format(month)},
+               'xAxis': {'title': {'text': 'Day'}}})
     return render(request, "Charts/chart_inc_month.html", {'incomechart': cht})
 
 @login_required
@@ -132,23 +115,17 @@ def chart_inc_year(request, year):
         DataPool(
            series=
             [{'options': {
-               'source': MonthlyIncome.objects.filter(year=year,
+                'source': MonthlyIncome.objects.filter(year=year,
                            user=request.user)},
-              'terms': [
-                'month',
-                'amount_income']}
+              'terms': ['month', 'amount_income']}
              ])
 
     #Step 2: Create the Chart object
     cht = Chart(
             datasource = incomedata,
             series_options =
-              [{'options':{
-                  'type': 'line',
-                  'stacking': False},
-                'terms':{
-                  'month': [
-                    'amount_income']
+              [{'options':{'type': 'line', 'stacking': False},
+                'terms':{'month': ['amount_income']
                   }}],
             chart_options =
               {'title': {
@@ -217,39 +194,21 @@ def saving_plans(request):
 
 @login_required
 def chart_exp_month(request, year, month):
-    # creates a chart of monthly spendings
-    #Step 1: Create a DataPool with the data we want to retrieve.
-    #get all expenses for one day
     expensedata = \
         DataPool(
            series=
             [{'options': {
                'source': DailyExpenses.objects.filter(month=month, year=year,
                            user=request.user)},
-              'terms': [
-                'day',
-                'amount_expenses']}
-             ])
-
-    #Step 2: Create the Chart object
+              'terms': ['day','amount_expenses']}])
     cht = Chart(
             datasource = expensedata,
             series_options =
-              [{'options':{
-                  'type': 'line',
-                  'stacking': False},
-                'terms':{
-                  'day': [
-                    'amount_expenses']
-                  }}],
+              [{'options':{ 'type': 'line', 'stacking': False},
+                'terms':{'day': ['amount_expenses']}}],
             chart_options =
-              {'title': {
-                   'text': 'Expenses in {}'.format(month)},
-               'xAxis': {
-                    'title': {
-                       'text': 'Day'}}})
-
-    #Step 3: Send the chart object to the template.
+              {'title': {'text': 'Expenses in {}'.format(month)},
+               'xAxis': {'title': {'text': 'Day'}}})
     return render(request, "Charts/chart_exp_month.html", {'expensechart': cht})
 
 @login_required
@@ -263,44 +222,53 @@ def chart_exp_year(request, year):
             chart_options =
               {'title': {'text': 'Expenses in {}'.format(year)}, 'xAxis': {'title': {'text': 'Month'}}})
 
-    #Step 3: Send the chart object to the template.
     return render(request, "Charts/chart_exp_year.html", {'expensechartyear': cht})
 
 def chart_cashflow_year(request, year):
     ds = DataPool(
            series=
-            [{'options': {
-                'source': MonthlyIncome.objects.filter(year=year,
+            [{'options': {'source': MonthlyIncome.objects.filter(year=year,
                            user=request.user)},
-              'terms': [
-                'month',
-                'amount_income']},
-             {'options': {
-                'source': MonthlyExpenses.objects.filter(year=year,
+              'terms': ['month', 'amount_income']},
+             {'options': {'source': MonthlyExpenses.objects.filter(year=year,
                            user=request.user)},
-              'terms': [
-                  {'month' : 'month'},
-                    'amount']}
-             ])
+              'terms': [{'month_expenses' : 'month'},'amount_expenses']}])
 
     cht = Chart(
             datasource = ds,
             series_options =
-              [{'options':{
-                  'type': 'line',
-                  'stacking': False},
-                'terms':{
-                  'month': [
-                    'amount'],
-                  'month': [
-                    'amount']
-                  }}],
+              [{'options':{'color': '#51D65C', 'type': 'area','stacking': False},
+                'terms':{'month': ['amount_income']}},
+               {'options':{'color': '#D44C6C', 'type': 'area','stacking': False},
+                'terms':{'month_expenses': ['amount_expenses']}}],
+
             chart_options =
-              {'title': {
-                   'text': 'Cash Flow {}'.format(year)},
-               'xAxis': {
-                    'title': {
-                       'text': 'Month number'}}})
+              {'title': {'text': 'Cash Flow {}'.format(year)},
+               'xAxis': {'title': {'text': 'Month'}}})
     return render(request, "Charts/chart_cashflow_year.html", {'cashflowchartyear': cht})
+
+def chart_cashflow_month(request, year, month):
+    ds = DataPool(
+           series=
+            [{'options': {'source': DailyExpenses.objects.filter(year=year, month=month,
+                           user=request.user)},
+              'terms': [{'day_expenses' : 'day'},'amount_expenses']},
+             {'options': {'source': DailyIncome.objects.filter(year=year, month=month,
+                           user=request.user)},
+              'terms': ['day', 'amount_income']}])
+
+    cht = Chart(
+            datasource = ds,
+            series_options =
+              [{'options':{'color': '#D44C6C', 'type': 'area','stacking': False},
+                'terms':{'day_expenses': ['amount_expenses']}},
+               {'options':{'color': '#51D65C', 'type': 'area','stacking': False},
+                'terms':{'day': ['amount_income']}}],
+
+            chart_options =
+              {'title': {'text': 'Cash Flow {}'.format(month)},
+               'xAxis': {'title': {'text': 'Day'}}})
+    return render(request, "Charts/chart_cashflow_day.html", {'cashflowchartday': cht})
+
 
 

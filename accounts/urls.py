@@ -24,9 +24,12 @@ urlpatterns = patterns('',
     # charts
     url(r'^charts/income/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_inc_month', name='chart_inc_month'),
     url(r'^charts/income/(?P<year>\w+)/$', 'accounting.views.chart_inc_year', name='chart_inc_year'),
+    url(r'^charts/income/(?P<category>\w+)/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_income_cat_month', name='chart_income_cat_month'),
+
 
     #Charts
     url(r'^charts/cashflow/(?P<year>\w+)/$', 'accounting.views.chart_cashflow_year', name='chart_cashflow_year'),
+    url(r'^charts/cashflow/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_cashflow_month', name='chart_cashflow_month'),
 
     #handling savings
     url(r'^savingplan/add$', 'accounting.views.add_saving', name='add_saving'),
