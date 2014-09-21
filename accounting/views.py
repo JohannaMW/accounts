@@ -135,7 +135,7 @@ def chart_inc_year(request, year):
                'source': MonthlyIncome.objects.filter(year=year,
                            user=request.user)},
               'terms': [
-                'month',
+                'month_income',
                 'amount_income']}
              ])
 
@@ -147,7 +147,7 @@ def chart_inc_year(request, year):
                   'type': 'line',
                   'stacking': False},
                 'terms':{
-                  'month': [
+                  'month_income': [
                     'amount_income']
                   }}],
             chart_options =
@@ -224,7 +224,7 @@ def chart_exp_month(request, year, month):
         DataPool(
            series=
             [{'options': {
-               'source': DailyExpenses.objects.filter(month=month, year=year,
+               'source': DailyExpenses.objects.filter(month_expenses=month, year=year,
                            user=request.user)},
               'terms': [
                 'day',
@@ -256,10 +256,10 @@ def chart_exp_month(request, year, month):
 def chart_exp_year(request, year):
     expensedata = \
         DataPool(series= [{'options': {'source': MonthlyExpenses.objects.filter(year=year, user=request.user)},
-              'terms': ['month','amount_expenses']}])
+              'terms': ['month_expenses','amount_expenses']}])
     cht = Chart(
             datasource = expensedata,
-            series_options = [{'options':{'type': 'line', 'stacking': False}, 'terms':{'month': ['amount_expenses']}}],
+            series_options = [{'options':{'type': 'line', 'stacking': False}, 'terms':{'month_expenses': ['amount_expenses']}}],
             chart_options =
               {'title': {'text': 'Expenses in {}'.format(year)}, 'xAxis': {'title': {'text': 'Month'}}})
 
@@ -273,13 +273,13 @@ def chart_cashflow_year(request, year):
                 'source': MonthlyIncome.objects.filter(year=year,
                            user=request.user)},
               'terms': [
-                'month',
+                'month_income',
                 'amount_income']},
              {'options': {
                 'source': MonthlyExpenses.objects.filter(year=year,
                            user=request.user)},
               'terms': [
-                  {'month' : 'month'},
+                  {'month_expenses' : 'month'},
                     'amount']}
              ])
 
@@ -290,9 +290,9 @@ def chart_cashflow_year(request, year):
                   'type': 'line',
                   'stacking': False},
                 'terms':{
-                  'month': [
+                  'month_income': [
                     'amount'],
-                  'month': [
+                  'month_expenses': [
                     'amount']
                   }}],
             chart_options =
