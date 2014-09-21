@@ -21,7 +21,7 @@ class Expense(models.Model):
 
 class DailyExpenses(models.Model):
     year = models.IntegerField()
-    month_expenses = models.IntegerField()
+    month = models.IntegerField()
     day = models.IntegerField()
     amount_expenses = models.FloatField()
     user = models.ForeignKey(User, related_name="dailyexpenses")
@@ -42,7 +42,7 @@ class DailyExpenses(models.Model):
 
 class MonthlyExpenses(models.Model):
     year = models.IntegerField()
-    month_expenses = models.IntegerField()
+    month = models.IntegerField()
     amount_expenses = models.FloatField()
     user = models.ForeignKey(User, related_name="monthlyexpenses")
 
@@ -79,7 +79,7 @@ class Income(models.Model):
 
 class DailyIncome(models.Model):
     year = models.IntegerField()
-    month_income = models.IntegerField()
+    month = models.IntegerField()
     day = models.IntegerField()
     amount_income = models.FloatField()
     user = models.ForeignKey(User, related_name="dailyincome")
@@ -100,7 +100,7 @@ class DailyIncome(models.Model):
 
 class MonthlyIncome(models.Model):
     year = models.IntegerField()
-    month_income = models.IntegerField()
+    month = models.IntegerField()
     amount_income = models.FloatField()
     user = models.ForeignKey(User, related_name="monthlyincome")
 
