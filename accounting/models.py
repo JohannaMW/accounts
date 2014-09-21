@@ -47,7 +47,7 @@ class MonthlyExpenses(models.Model):
     user = models.ForeignKey(User, related_name="monthlyexpenses")
 
     @staticmethod
-    def create_monthly_expenses(self, year, user):
+    def create_monthly_expenses(year, user):
         month = 1
         while month <= 12:
             # get all expenses for the month
@@ -105,7 +105,7 @@ class MonthlyIncome(models.Model):
     user = models.ForeignKey(User, related_name="monthlyincome")
 
     @staticmethod
-    def create_monthly_income(self, year, user):
+    def create_monthly_income(year, user):
         month = 1
         while month <= 12:
             # get all expenses for the month

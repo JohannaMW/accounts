@@ -81,8 +81,12 @@ def add_expenses(request):
     if request.method == "POST":
         form = ExpenseForm(request.POST)
         if form.is_valid():
-            if form.save():
-                return redirect("/expenses/hist/")
+            new_expense = form.save()
+            month = new_expense.date.month
+            year = new_expense.date.year
+            DailyExpenses.create_daily_expenses(year=year, month=month, user=request.user)
+            MonthlyExpenses.create_monthly_expenses(year=year, user=request.user)
+            return redirect("/expenses/hist")
     else:
         form = ExpenseForm()
     data = {'form': form}
@@ -90,12 +94,6 @@ def add_expenses(request):
 
 @login_required
 def chart_inc_month(request, year, month):
-    # creates a chart of monthly spendings
-    #Step 1: Create a DataPool with the data we want to retrieve.
-    #get all expenses for one day
-    inc = DailyIncome.objects.filter(year=year, month=month)
-    if not inc:
-        DailyIncome.create_daily_income(year, month, request.user)
     incomedata = \
         DataPool(
            series=
@@ -130,12 +128,6 @@ def chart_inc_month(request, year, month):
 
 @login_required
 def chart_inc_year(request, year):
-    # creates a chart of annual income
-    #Step 1: Create a DataPool with the data we want to retrieve.
-    #get all expenses for one day
-    inc = MonthlyIncome.objects.filter(year=year, user=request.user)
-    if not inc:
-        MonthlyIncome.create_monthly_income(year, request.user)
     incomedata = \
         DataPool(
            series=
@@ -193,8 +185,12 @@ def add_income(request):
     if request.method == "POST":
         form = IncomeForm(request.POST)
         if form.is_valid():
-            if form.save():
-                return redirect("/home/")
+            new_income = form.save()
+            month = new_income.date.month
+            year = new_income.date.year
+            DailyIncome.create_daily_income(year=year, month=month, user=request.user)
+            MonthlyIncome.create_monthly_income(year=year, user=request.user)
+            return redirect("/income/hist")
     else:
         form = IncomeForm()
     data = {'form': form}
@@ -224,9 +220,6 @@ def chart_exp_month(request, year, month):
     # creates a chart of monthly spendings
     #Step 1: Create a DataPool with the data we want to retrieve.
     #get all expenses for one day
-    exp = DailyExpenses.objects.filter(year=year, month=month)
-    if not exp:
-        DailyExpenses.create_daily_expenses(year, month, request.user)
     expensedata = \
         DataPool(
            series=
@@ -261,9 +254,6 @@ def chart_exp_month(request, year, month):
 
 @login_required
 def chart_exp_year(request, year):
-    exp = MonthlyExpenses.objects.filter(year=year, user=request.user)
-    if not exp:
-        MonthlyExpenses.create_monthly_expenses(year, request.user)
     expensedata = \
         DataPool(series= [{'options': {'source': MonthlyExpenses.objects.filter(year=year, user=request.user)},
               'terms': ['month','amount_expenses']}])
@@ -277,12 +267,6 @@ def chart_exp_year(request, year):
     return render(request, "Charts/chart_exp_year.html", {'expensechartyear': cht})
 
 def chart_cashflow_year(request, year):
-    exp = MonthlyExpenses.objects.filter(year=year, user=request.user)
-    if not exp:
-        MonthlyExpenses.create_monthly_expenses(year, request.user)
-    inc = MonthlyIncome.objects.filter(year=year, user=request.user)
-    if not inc:
-        MonthlyIncome.create_monthly_income(year, request.user)
     ds = DataPool(
            series=
             [{'options': {
