@@ -13,7 +13,8 @@ urlpatterns = patterns('',
     url(r'^expenses/categories/$', 'accounting.views.expenses_cat', name= 'expenses_categories'),
     url(r'^expenses/categories/(?P<category_id>\w+)/$', 'accounting.views.expenses_by_cat', name= 'expenses_by_categories'),
     # charts
-    url(r'^charts/expenses/month$', 'accounting.views.chart_exp_month', name='chart_exp_month'),
+    url(r'^charts/expenses/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_exp_month', name='chart_exp_month'),
+    url(r'^charts/expenses/(?P<year>\w+)/$', 'accounting.views.chart_exp_year', name='chart_exp_year'),
 
     #handling income
     url(r'^income/add$', 'accounting.views.add_income', name='add_income'),

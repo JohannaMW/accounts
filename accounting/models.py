@@ -19,6 +19,19 @@ class Expense(models.Model):
     def __unicode__(self):
         return self.name
 
+class DailyExpenses(models.Model):
+    year = models.IntegerField()
+    month = models.IntegerField()
+    day = models.IntegerField()
+    amount = models.FloatField()
+    user = models.ForeignKey(User, related_name="dailyexpenses")
+
+class MonthlyExpenses(models.Model):
+    year = models.IntegerField()
+    month = models.IntegerField()
+    amount = models.FloatField()
+    user = models.ForeignKey(User, related_name="monthlyexpenses")
+
 class IncomeType(models.Model):
     name = models.CharField(max_length=120)
     exchange_rate = models.FloatField()
