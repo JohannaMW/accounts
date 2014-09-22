@@ -24,14 +24,16 @@ urlpatterns = patterns('',
     url(r'^income/type/$', 'accounting.views.income_type', name= 'income_type'),
     url(r'^income/type/(?P<type_id>\w+)/$', 'accounting.views.income_by_type', name= 'income_by_type'),
     # charts
-    url(r'^charts/income/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_inc_month', name='chart_inc_month'),
     url(r'^charts/income/(?P<year>\w+)/$', 'accounting.views.chart_inc_year', name='chart_inc_year'),
+    url(r'^charts/income/(?P<type>\w+)/(?P<year>\w+)/$', 'accounting.views.chart_income_type_year', name='chart_income_type_year'),
+    url(r'^charts/income/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_inc_month', name='chart_inc_month'),
     url(r'^charts/income/(?P<type>\w+)/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_income_type_month', name='chart_income_type_month'),
 
 
     #Charts
     url(r'^charts/cashflow/(?P<year>\w+)/$', 'accounting.views.chart_cashflow_year', name='chart_cashflow_year'),
     url(r'^charts/cashflow/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_cashflow_month', name='chart_cashflow_month'),
+    url(r'^charts/categories/(?P<year>\w+)/$', 'accounting.views.chart_spendings_categories', name='chart_spendings_categories'),
 
     # User handling
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),

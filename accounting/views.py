@@ -6,7 +6,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import authenticate, login
 from accounting.models import Expense, Income, IncomeType, Category, DailyExpenses, MonthlyExpenses, DailyIncome, MonthlyIncome
 import datetime
-from chartit import DataPool, Chart
+from chartit import DataPool, Chart, PivotDataPool, PivotChart
+from django.db.models import Sum
 
 def home(request):
     return render(request, 'home.html', {})
@@ -132,6 +133,23 @@ def chart_inc_month(request, year, month):
               {'title': {'text': 'Incomes in {}'.format(month)},
                'xAxis': {'title': {'text': 'Day'}}})
     return render(request, "Charts/chart_inc_month.html", {'incomechart': cht})
+
+@login_required
+def chart_income_type_year(request, type, year):
+    incomedata = \
+        DataPool(
+           series=
+            [{'options': {'source': MonthlyIncome.objects.filter(year=year, user=request.user, type=type)},
+              'terms': ['month', 'amount_income']}])
+
+    cht = Chart(
+            datasource = incomedata,
+            series_options = [{'options':{'type': 'line', 'stacking': False},
+                'terms':{'month': ['amount_income']}}],
+            chart_options = {'title': {'text': '{} income in {}'.format(type, year)},
+               'xAxis': {'title': {'text': 'Month'}}})
+
+    return render(request, "Charts/chart_inc_type_year.html", {'incomechartyear_type': cht})
 
 @login_required
 def chart_inc_year(request, year):
@@ -290,5 +308,13 @@ def chart_cashflow_month(request, year, month):
                'xAxis': {'title': {'text': 'Day'}}})
     return render(request, "Charts/chart_cashflow_day.html", {'cashflowchartday': cht})
 
-
-
+def chart_spendings_categories(request, year):
+    ds = PivotDataPool( series= [
+       {'options':{ 'source': Expense.objects.filter(date__year=year),
+          'categories': 'category__name'},
+        'terms': {'tot_exp':Sum('amount')}}])
+    pivcht = PivotChart(
+          datasource = ds,
+          series_options = [ {'options': {'type': 'column'}, 'terms': ['tot_exp']}],
+          chart_options = {'title': {'text':'Expenses by Category {}'.format(year)}})
+    return render(request, "Charts/chart_spendings_categories.html", {'spendingchartcat': pivcht})
