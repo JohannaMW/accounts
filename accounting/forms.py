@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import ModelForm
-from accounting.models import Expense, Saving, IncomeType, Income
+from accounting.models import Expense, IncomeType, Income
 
 class EmailUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -21,9 +21,3 @@ class IncomeForm(ModelForm):
 
      class Meta:
          model = Income
-
-class SavingForm(ModelForm):
-
-     class Meta:
-         model = Saving
-

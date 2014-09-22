@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block header %}
+    {% load chartit %}
+    {{ expensechartyear_percat|load_charts:"container" }}
+{% endblock header %}
+{% block content %}
+     <div id='container'> Chart will be rendered here </div>
+{% endblock %}
