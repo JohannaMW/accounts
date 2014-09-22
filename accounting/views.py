@@ -318,3 +318,37 @@ def chart_spendings_categories(request, year):
           series_options = [ {'options': {'type': 'column'}, 'terms': ['tot_exp']}],
           chart_options = {'title': {'text':'Expenses by Category {}'.format(year)}})
     return render(request, "Charts/chart_spendings_categories.html", {'spendingchartcat': pivcht})
+
+def chart_spendings_categories_month(request, year, month):
+    ds = PivotDataPool( series= [
+       {'options':{ 'source': Expense.objects.filter(date__year=year, date__month=month),
+          'categories': 'category__name'},
+        'terms': {'tot_exp':Sum('amount')}}])
+    pivcht = PivotChart(
+          datasource = ds,
+          series_options = [ {'options': {'type': 'column'}, 'terms': ['tot_exp']}],
+          chart_options = {'title': {'text':'Expenses by Category {}.0{}'.format(year, month)}})
+    return render(request, "Charts/chart_spendings_categories_month.html", {'spendingchartcat_month': pivcht})
+
+def chart_incometype(request, year):
+    ds = PivotDataPool( series= [
+       {'options':{ 'source': Income.objects.filter(date__year=year),
+          'categories': 'type__name'},
+        'terms': {'tot_inc':Sum('amount')}}])
+    pivcht = PivotChart(
+          datasource = ds,
+          series_options = [ {'options': {'type': 'column'}, 'terms': ['tot_inc']}],
+          chart_options = {'title': {'text':'Income by Type, {}'.format(year)}})
+    return render(request, "Charts/chart_income_type.html", {'incomecharttype': pivcht})
+
+def chart_incomes_type_month(request, year, month):
+    ds = PivotDataPool( series= [
+       {'options':{ 'source': Income.objects.filter(date__year=year, date__month=month),
+          'categories': 'type__name'},
+        'terms': {'tot_inc':Sum('amount')}}])
+    pivcht = PivotChart(
+          datasource = ds,
+          series_options = [ {'options': {'type': 'column'}, 'terms': ['tot_inc']}],
+          chart_options = {'title': {'text':'Income by Type {}.0{}'.format(year, month)}})
+    return render(request, "Charts/chart_income_type_month.html", {'incomecharttype_month': pivcht})
+

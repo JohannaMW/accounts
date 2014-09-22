@@ -17,6 +17,12 @@ urlpatterns = patterns('',
     url(r'^charts/expenses/(?P<year>\w+)/(?P<category>\w+)/$', 'accounting.views.chart_exp_year_cat', name='chart_exp_year_cat'),
     url(r'^charts/expense/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_exp_month', name='chart_exp_month'),
     url(r'^charts/expense/(?P<year>\w+)/(?P<month>\w+)/(?P<category>\w+)/$', 'accounting.views.chart_exp_month_cat', name='chart_exp_month_cat'),
+    url(r'^charts/expenses/categories/(?P<year>\w+)/$', 'accounting.views.chart_spendings_categories', name='chart_spendings_categories'),
+    url(r'^charts/expenses/categories/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_spendings_categories_month', name='chart_spendings_categories_month'),
+
+    url(r'^charts/income/types/(?P<year>\w+)/$', 'accounting.views.chart_incometype', name='chart_income_types'),
+    url(r'^charts/income/types/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_incomes_type_month', name='chart_income_types_month'),
+
 
     #handling income
     url(r'^income/add$', 'accounting.views.add_income', name='add_income'),
@@ -29,11 +35,9 @@ urlpatterns = patterns('',
     url(r'^charts/income/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_inc_month', name='chart_inc_month'),
     url(r'^charts/income/(?P<type>\w+)/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_income_type_month', name='chart_income_type_month'),
 
-
     #Charts
     url(r'^charts/cashflow/(?P<year>\w+)/$', 'accounting.views.chart_cashflow_year', name='chart_cashflow_year'),
     url(r'^charts/cashflow/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_cashflow_month', name='chart_cashflow_month'),
-    url(r'^charts/categories/(?P<year>\w+)/$', 'accounting.views.chart_spendings_categories', name='chart_spendings_categories'),
 
     # User handling
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
