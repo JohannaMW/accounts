@@ -1,12 +1,18 @@
 {% extends "base.html" %}
-
+{% load bootstrap3 %}
 {% block content %}
-    <form method="post" action=".">
+    <div class="container">
+     <form method="post" action="." style="width:400px; margin-top:100px; margin-left: 350px;">
         {% csrf_token %}
-        {{ form.as_p }}
-
-        <input type="submit" value="Log in">
-    </form>
+        {% bootstrap_form form %}
+         {% buttons %}
+         <button type="submit" class="btn brn-primary">
+             {% bootstrap_icon "star" %} Log in
+         </button>
+     {% endbuttons %}
 
     <p>Not member? <a href="{% url 'register' %}">Register!</a></p>
+      </form>
+
+        </div>
 {% endblock %}
