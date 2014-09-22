@@ -4,10 +4,69 @@
 Dashboard
 {% endblock %}
 
+{% block header %}
+
+{% endblock header %}
+
 {% block content %}
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Dashboard</h1>
+
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="/static/img/spandings.png" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>Spendings</h4>
+              <span class="text-muted">Check out your spendings!</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="/static/img/income.png" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>Income</h4>
+              <span class="text-muted">Take a look at your income!</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="/static/img/cashflow.png"  class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>Cash Flow</h4>
+              <span class="text-muted">What's left? Check out your Cash-Flow!</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="/static/img/relations2.png"  class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>Relations</h4>
+              <span class="text-muted">Where did it go? Check out your spending patterns!</span>
+            </div>
+          </div>
+
+
+     <h2 class="sub-header">Current Balance</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Income</td>
+                  <td style="color:green;">{{ total_income }}</td>
+                </tr>
+                <tr>
+                  <td>Expenses</td>
+                  <td  style="color:red;">{{ total_expenses}}</td>
+                </tr>
+                <tr>
+                  <td>Current Balance</td>
+                  <td style="text-decoration:underline;">{{ total }}</td>
+                </tr>
+                </tbody>
+                </table>
+              </div>
+      </div>
+
+
 Your current balance:  {{ total }}<br>
 Income:  {{ total_income }}<br>
 Expenses: {{ total_expenses }}<br>
 
 
-{% endblock %}>
+{% endblock %}
