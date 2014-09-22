@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from accounting.forms import EmailUserCreationForm, ExpenseForm, IncomeForm, SavingForm
+from accounting.forms import EmailUserCreationForm, ExpenseForm, IncomeForm
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import authenticate, login
-from accounting.models import Expense, Income, IncomeType, Saving, Category, DailyExpenses, MonthlyExpenses, DailyIncome, MonthlyIncome
+from accounting.models import Expense, Income, IncomeType, Category, DailyExpenses, MonthlyExpenses, DailyIncome, MonthlyIncome
 import datetime
 from chartit import DataPool, Chart
 
@@ -47,6 +47,7 @@ def register(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
+
                     return redirect("/dashboard/")
     else:
         form = EmailUserCreationForm()
@@ -84,8 +85,14 @@ def add_expenses(request):
             new_expense = form.save()
             month = new_expense.date.month
             year = new_expense.date.year
-            DailyExpenses.create_daily_expenses(year=year, month=month, user=request.user)
-            MonthlyExpenses.create_monthly_expenses(year=year, user=request.user)
+            day = new_expense.date.day
+            amount = new_expense.amount
+            category = new_expense.category
+            # update monthly and daily records
+            DailyExpenses.create_daily_expenses(year=year, month=month, day=day, amount=amount, user=request.user)
+            DailyExpenses.create_daily_expenses_cat(year=year, month=month, day=day, amount=amount, category=category, user=request.user)
+            MonthlyExpenses.create_monthly_expenses(year=year, month=month, amount=amount, user=request.user)
+            MonthlyExpenses.create_monthly_expenses_cat(year=year, month=month, amount=amount, category=category, user=request.user)
             return redirect("/expenses/hist")
     else:
         form = ExpenseForm()
@@ -93,11 +100,28 @@ def add_expenses(request):
     return render(request, 'Expenses/add_expenses.html', data)
 
 @login_required
+def chart_income_type_month(request, type, year, month):
+    incomedata = \
+        DataPool(
+           series=
+            [{'options': {'source': DailyIncome.objects.filter(month=month, year=year, type=type,
+                           user=request.user)}, 'terms': ['day', 'amount_income']}])
+    cht = Chart(
+            datasource = incomedata,
+            series_options =
+              [{'options':{ 'type': 'line', 'stacking': False},
+                'terms':{'day': ['amount_income']}}],
+            chart_options =
+              {'title': {'text': '{} incomes in {}'.format(type, month)},
+               'xAxis': {'title': {'text': 'Day'}}})
+    return render(request, "Charts/chart_inc_type_month.html", {'incomecharttype': cht})
+
+@login_required
 def chart_inc_month(request, year, month):
     incomedata = \
         DataPool(
            series=
-            [{'options': {'source': DailyIncome.objects.filter(month=month, year=year,
+            [{'options': {'source': DailyIncome.objects.filter(month=month, year=year, type__isnull=True,
                            user=request.user)}, 'terms': ['day', 'amount_income']}])
     cht = Chart(
             datasource = incomedata,
@@ -114,27 +138,16 @@ def chart_inc_year(request, year):
     incomedata = \
         DataPool(
            series=
-            [{'options': {
-                'source': MonthlyIncome.objects.filter(year=year,
-                           user=request.user)},
-              'terms': ['month', 'amount_income']}
-             ])
+            [{'options': {'source': MonthlyIncome.objects.filter(year=year, user=request.user, type__isnull=True)},
+              'terms': ['month', 'amount_income']}])
 
-    #Step 2: Create the Chart object
     cht = Chart(
             datasource = incomedata,
-            series_options =
-              [{'options':{'type': 'line', 'stacking': False},
-                'terms':{'month': ['amount_income']
-                  }}],
-            chart_options =
-              {'title': {
-                   'text': 'Income in {}'.format(year)},
-               'xAxis': {
-                    'title': {
-                       'text': 'Month'}}})
+            series_options = [{'options':{'type': 'line', 'stacking': False},
+                'terms':{'month': ['amount_income']}}],
+            chart_options = {'title': {'text': 'Income in {}'.format(year)},
+               'xAxis': {'title': {'text': 'Month'}}})
 
-    #Step 3: Send the chart object to the template.
     return render(request, "Charts/chart_inc_year.html", {'incomechartyear': cht})
 
 @login_required
@@ -165,8 +178,14 @@ def add_income(request):
             new_income = form.save()
             month = new_income.date.month
             year = new_income.date.year
-            DailyIncome.create_daily_income(year=year, month=month, user=request.user)
-            MonthlyIncome.create_monthly_income(year=year, user=request.user)
+            day = new_income.date.day
+            amount = new_income.amount
+            type = new_income.type
+            # update monthly/ daily records
+            DailyIncome.create_daily_income(year=year, month=month, day=day, amount=amount, user=request.user)
+            DailyIncome.create_daily_income_type(year=year, month=month, day=day, amount=amount, type=type, user=request.user)
+            MonthlyIncome.create_monthly_income(year=year, month=month, amount=amount, user=request.user)
+            MonthlyIncome.create_monthly_income_type(year=year, month=month, amount=amount, type=type, user=request.user)
             return redirect("/income/hist")
     else:
         form = IncomeForm()
@@ -174,47 +193,35 @@ def add_income(request):
     return render(request, 'Income/add_income.html', data)
 
 @login_required
-def add_saving(request):
-    # lets user add a saving plan
-    if request.method == "POST":
-        form = SavingForm(request.POST)
-        if form.is_valid():
-            if form.save():
-                return redirect("/home/")
-    else:
-        form = SavingForm()
-    data = {'form': form}
-    return render(request, 'Saving/add_saving.html', data)
-
-@login_required
-def saving_plans(request):
-    # lists all saving plans
-    plans = Saving.objects.filter(user=request.user).order_by('-from_date')
-    return render(request, 'Saving/saving_plans.html', {'plans': plans})
+def chart_exp_month_cat(request, year, month, category):
+    expensedata = \
+        DataPool(series=[
+            {'options': {'source': DailyExpenses.objects.filter(month=month, year=year, user=request.user, category=category)},
+              'terms': ['day','amount_expenses']}])
+    cht = Chart(
+            datasource = expensedata,
+            series_options = [{'options':{ 'type': 'line', 'stacking': False}, 'terms':{'day': ['amount_expenses']}}],
+            chart_options = {'title': {'text': 'Expenses in {}, {}'.format(category, month)},
+               'xAxis': {'title': {'text': 'Day'}}})
+    return render(request, "Charts/chart_exp_month_cat.html", {'expensechart_percat': cht})
 
 @login_required
 def chart_exp_month(request, year, month):
     expensedata = \
-        DataPool(
-           series=
-            [{'options': {
-               'source': DailyExpenses.objects.filter(month=month, year=year,
-                           user=request.user)},
+        DataPool(series=[
+            {'options': {'source': DailyExpenses.objects.filter(month=month, year=year, user=request.user, category__isnull=True)},
               'terms': ['day','amount_expenses']}])
     cht = Chart(
             datasource = expensedata,
-            series_options =
-              [{'options':{ 'type': 'line', 'stacking': False},
-                'terms':{'day': ['amount_expenses']}}],
-            chart_options =
-              {'title': {'text': 'Expenses in {}'.format(month)},
+            series_options = [{'options':{ 'type': 'line', 'stacking': False}, 'terms':{'day': ['amount_expenses']}}],
+            chart_options = {'title': {'text': 'Expenses in {}'.format(month)},
                'xAxis': {'title': {'text': 'Day'}}})
     return render(request, "Charts/chart_exp_month.html", {'expensechart': cht})
 
 @login_required
 def chart_exp_year(request, year):
     expensedata = \
-        DataPool(series= [{'options': {'source': MonthlyExpenses.objects.filter(year=year, user=request.user)},
+        DataPool(series= [{'options': {'source': MonthlyExpenses.objects.filter(year=year, category__isnull=True, user=request.user)},
               'terms': ['month','amount_expenses']}])
     cht = Chart(
             datasource = expensedata,
@@ -224,13 +231,26 @@ def chart_exp_year(request, year):
 
     return render(request, "Charts/chart_exp_year.html", {'expensechartyear': cht})
 
+@login_required
+def chart_exp_year_cat(request, year, category):
+    expensedata = \
+        DataPool(series= [{'options': {'source': MonthlyExpenses.objects.filter(year=year, category=category, user=request.user)},
+              'terms': ['month','amount_expenses']}])
+    cht = Chart(
+            datasource = expensedata,
+            series_options = [{'options':{'type': 'line', 'stacking': False}, 'terms':{'month': ['amount_expenses']}}],
+            chart_options =
+              {'title': {'text': 'Expenses in {}, {}'.format(category, year)}, 'xAxis': {'title': {'text': 'Month'}}})
+
+    return render(request, "Charts/chart_exp_year_cat.html", {'expensechartyear_percat': cht})
+
 def chart_cashflow_year(request, year):
     ds = DataPool(
            series=
             [{'options': {'source': MonthlyIncome.objects.filter(year=year,
-                           user=request.user)},
+                           user=request.user, type__isnull=True)},
               'terms': ['month', 'amount_income']},
-             {'options': {'source': MonthlyExpenses.objects.filter(year=year,
+             {'options': {'source': MonthlyExpenses.objects.filter(year=year, category__isnull=True,
                            user=request.user)},
               'terms': [{'month_expenses' : 'month'},'amount_expenses']}])
 
@@ -250,10 +270,10 @@ def chart_cashflow_year(request, year):
 def chart_cashflow_month(request, year, month):
     ds = DataPool(
            series=
-            [{'options': {'source': DailyExpenses.objects.filter(year=year, month=month,
+            [{'options': {'source': DailyExpenses.objects.filter(year=year, month=month, category__isnull=True,
                            user=request.user)},
               'terms': [{'day_expenses' : 'day'},'amount_expenses']},
-             {'options': {'source': DailyIncome.objects.filter(year=year, month=month,
+             {'options': {'source': DailyIncome.objects.filter(year=year, month=month, type__isnull=True,
                            user=request.user)},
               'terms': ['day', 'amount_income']}])
 

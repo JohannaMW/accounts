@@ -13,8 +13,10 @@ urlpatterns = patterns('',
     url(r'^expenses/categories/$', 'accounting.views.expenses_cat', name= 'expenses_categories'),
     url(r'^expenses/categories/(?P<category_id>\w+)/$', 'accounting.views.expenses_by_cat', name= 'expenses_by_categories'),
     # charts
-    url(r'^charts/expenses/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_exp_month', name='chart_exp_month'),
     url(r'^charts/expenses/(?P<year>\w+)/$', 'accounting.views.chart_exp_year', name='chart_exp_year'),
+    url(r'^charts/expenses/(?P<year>\w+)/(?P<category>\w+)/$', 'accounting.views.chart_exp_year_cat', name='chart_exp_year_cat'),
+    url(r'^charts/expense/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_exp_month', name='chart_exp_month'),
+    url(r'^charts/expense/(?P<year>\w+)/(?P<month>\w+)/(?P<category>\w+)/$', 'accounting.views.chart_exp_month_cat', name='chart_exp_month_cat'),
 
     #handling income
     url(r'^income/add$', 'accounting.views.add_income', name='add_income'),
@@ -24,16 +26,12 @@ urlpatterns = patterns('',
     # charts
     url(r'^charts/income/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_inc_month', name='chart_inc_month'),
     url(r'^charts/income/(?P<year>\w+)/$', 'accounting.views.chart_inc_year', name='chart_inc_year'),
-    url(r'^charts/income/(?P<category>\w+)/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_income_cat_month', name='chart_income_cat_month'),
+    url(r'^charts/income/(?P<type>\w+)/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_income_type_month', name='chart_income_type_month'),
 
 
     #Charts
     url(r'^charts/cashflow/(?P<year>\w+)/$', 'accounting.views.chart_cashflow_year', name='chart_cashflow_year'),
     url(r'^charts/cashflow/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_cashflow_month', name='chart_cashflow_month'),
-
-    #handling savings
-    url(r'^savingplan/add$', 'accounting.views.add_saving', name='add_saving'),
-    url(r'^savingplans/$', 'accounting.views.saving_plans', name='saving_plans'),
 
     # User handling
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
