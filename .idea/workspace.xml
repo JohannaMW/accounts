@@ -69,14 +69,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="add_income.html" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="add_income.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/accounting/templates/Income/add_income.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.9695817" vertical-offset="0" max-vertical-offset="345">
+            <state vertical-scroll-proportion="-7.2083335" vertical-offset="82" max-vertical-offset="345">
               <caret line="17" column="14" selection-start-line="17" selection-start-column="14" selection-end-line="17" selection-end-column="14" />
               <folding>
                 <element signature="e#158#216#0#HTML" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.17175573" vertical-offset="0" max-vertical-offset="262">
+              <caret line="3" column="17" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="17" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -116,16 +126,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="345">
               <caret line="17" column="43" selection-start-line="17" selection-start-column="43" selection-end-line="17" selection-end-column="43" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="base.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/accounting/templates/base.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.0" vertical-offset="180" max-vertical-offset="1110">
-              <caret line="12" column="15" selection-start-line="12" selection-start-column="15" selection-end-line="12" selection-end-column="53" />
               <folding />
             </state>
           </provider>
@@ -190,6 +190,7 @@
         <option value="$PROJECT_DIR$/accounts/settings.py" />
         <option value="$PROJECT_DIR$/accounts/wsgi.py" />
         <option value="$PROJECT_DIR$/accounting/templates/Income/add_income.html" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -860,13 +861,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/local_settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="195">
-          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/accounting/templates/Expenses/expenses_historical.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="465">
@@ -1199,11 +1193,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/accounting/templates/Income/add_income.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.9695817" vertical-offset="0" max-vertical-offset="345">
+        <state vertical-scroll-proportion="-7.2083335" vertical-offset="82" max-vertical-offset="345">
           <caret line="17" column="14" selection-start-line="17" selection-start-column="14" selection-end-line="17" selection-end-column="14" />
           <folding>
             <element signature="e#158#216#0#HTML" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17175573" vertical-offset="0" max-vertical-offset="262">
+          <caret line="3" column="17" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="17" />
+          <folding />
         </state>
       </provider>
     </entry>
