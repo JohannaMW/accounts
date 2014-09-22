@@ -12,6 +12,9 @@ from django.db.models import Sum
 def home(request):
     return render(request, 'home.html', {})
 
+def charts(request):
+    return render(request, 'Charts/charts.html', {})
+
 @login_required
 def dashboard(request):
     month = datetime.date.today().month

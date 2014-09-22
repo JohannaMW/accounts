@@ -6,6 +6,7 @@ from accounts import settings
 urlpatterns = patterns('',
     url(r'^home/$', 'accounting.views.home', name='home'),
     url(r'^dashboard/$', 'accounting.views.dashboard', name='dashboard'),
+    url(r'^charts/$', 'accounting.views.charts', name='charts'),
 
     #handling expenses
     url(r'^expenses/add$', 'accounting.views.add_expenses', name='add_expenses'),
@@ -13,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^expenses/categories/$', 'accounting.views.expenses_cat', name= 'expenses_categories'),
     url(r'^expenses/categories/(?P<category_id>\w+)/$', 'accounting.views.expenses_by_cat', name= 'expenses_by_categories'),
     # charts
+
     url(r'^charts/expenses/(?P<year>\w+)/$', 'accounting.views.chart_exp_year', name='chart_exp_year'),
     url(r'^charts/expenses/(?P<year>\w+)/(?P<category>\w+)/$', 'accounting.views.chart_exp_year_cat', name='chart_exp_year_cat'),
     url(r'^charts/expense/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_exp_month', name='chart_exp_month'),
