@@ -13,8 +13,9 @@ urlpatterns = patterns('',
     url(r'^expenses/hist$', 'accounting.views.expenses_hist', name= 'expenses_hist'),
     url(r'^expenses/categories/$', 'accounting.views.expenses_cat', name= 'expenses_categories'),
     url(r'^expenses/categories/(?P<category_id>\w+)/$', 'accounting.views.expenses_by_cat', name= 'expenses_by_categories'),
-    # charts
 
+    # charts
+    url(r'^charts/expenses/$', 'accounting.views.chart_exp', name='chart_exp'),
     url(r'^charts/expenses/(?P<year>\w+)/$', 'accounting.views.chart_exp_year', name='chart_exp_year'),
     url(r'^charts/expenses/(?P<year>\w+)/(?P<category>\w+)/$', 'accounting.views.chart_exp_year_cat', name='chart_exp_year_cat'),
     url(r'^charts/expense/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_exp_month', name='chart_exp_month'),
@@ -32,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^income/type/$', 'accounting.views.income_type', name= 'income_type'),
     url(r'^income/type/(?P<type_id>\w+)/$', 'accounting.views.income_by_type', name= 'income_by_type'),
     # charts
+    url(r'^charts/income/$', 'accounting.views.chart_inc', name='chart_inc'),
     url(r'^charts/income/(?P<year>\w+)/$', 'accounting.views.chart_inc_year', name='chart_inc_year'),
     url(r'^charts/income/(?P<type>\w+)/(?P<year>\w+)/$', 'accounting.views.chart_income_type_year', name='chart_income_type_year'),
     url(r'^charts/income/(?P<year>\w+)/(?P<month>\w+)/$', 'accounting.views.chart_inc_month', name='chart_inc_month'),

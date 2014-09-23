@@ -213,6 +213,18 @@ def add_income(request):
     data = {'form': form}
     return render(request, 'Income/add_income.html', data)
 
+def chart_exp(request):
+    today = datetime.date.today()
+    month = today.month
+    expenses = Expense.objects.filter(user=request.user, date__month=month)
+    return render(request, 'Charts/chart_exp.html', {'expenses': expenses, 'month' : month})
+
+def chart_inc(request):
+    today = datetime.date.today()
+    month = today.month
+    incomes = Income.objects.filter(user=request.user, date__month=month)
+    return render(request, 'Charts/chart_inc.html', {'incomes': incomes, 'month' : month})
+
 @login_required
 def chart_exp_month_cat(request, year, month, category):
     expensedata = \

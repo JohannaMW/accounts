@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block header %}
+
+{% endblock header %}
+
+{% block content %}
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Incomes</h1>
+
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="/static/img/month.png" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>Per month</h4>
+              <span class="text-muted"></span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="/static/img/year.png" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>Per year</h4>
+              <span class="text-muted"></span>
+            </div>
+
+          </div>
+
+
+     <h2 class="sub-header">Income in {{ month }}</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+
+              <tbody>
+              {% for income in incomes %}
+                <tr>
+                  <td>{{ income.type.name }}</td>
+                  <td style="color:green;">{{ income.amount }}</td>
+                </tr>
+               {% endfor %}
+
+                </tbody>
+                </table>
+              </div>
+      </div>
+{% endblock %}
