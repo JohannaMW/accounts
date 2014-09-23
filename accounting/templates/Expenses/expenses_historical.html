@@ -5,8 +5,9 @@ Expenses Historical
 {% endblock %}
 
 {% block content %}
-    <h1> Your expenses</h1>
-      <table style="width:100%">
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Your Expenses (hist)</h1>
+      <table style="width:100%" class="table">
     <tr>
     <th>Description</th>
     <th>Category</th>
@@ -22,5 +23,6 @@ Expenses Historical
   </tr>
     {% endfor %}
        </table>
+  </div>
 
 {% endblock %}

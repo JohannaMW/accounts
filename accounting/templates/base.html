@@ -38,15 +38,6 @@
               <li class="active"><a href="{% url "home" %}">Home</a></li>
               {% if user.is_authenticated %}
                 <li><a href="{% url "dashboard" %}">Dashboard</a></li>
-              <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Charts<span class="caret"></span></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url "charts" %}">Spendings</a></li>
-                    <li><a href="{% url "charts" %}">Income</a></li>
-                    <li><a href="{% url "charts" %}">Cash Flow</a></li>
-                    <li><a href="{% url "charts" %}">Statistics</a></li>
-                  </ul>
-                </li>
              <li><a href="{% url 'logout' %}">Logout</a></li>
               {% else %}
                   <li><a href="{% url 'login' %}">Login</a></li>
@@ -62,10 +53,18 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview</a></li>
+            <li class="active"><a href="{% url "dashboard" %}">Overview</a></li>
             <li><a href="{% url "chart_exp" %}">Charts Spendings</a></li>
             <li><a href="{% url "chart_inc" %}">Charts Income</a></li>
             <li><a href="{% url "chart_cashflow_choice" %}">Charts Cash Flow</a></li>
+          </ul>
+             <ul class="nav nav-sidebar">
+            <li><a href="{% url 'add_expenses' %}">Add Spending</a></li>
+            <li><a href="{% url 'add_income' %}">Add Income</a></li>
+          </ul>
+            <ul class="nav nav-sidebar">
+            <li><a href="{% url 'expenses_hist' %}">Spendings Statement</a></li>
+            <li><a href="{% url 'income_hist' %}">Income Statement</a></li>
           </ul>
         </div>
      </div>

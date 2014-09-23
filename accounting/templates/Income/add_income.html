@@ -2,8 +2,9 @@
 {% load bootstrap3 %}
 {% block content %}
     <div class="container">
-    <h1>Add Spending</h1>
-     <form method="post" action="." style="width:400px; margin-top:100px; margin-left: 350px;">
+     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Add Income</h1>
+     <form method="post" action="/income/hist" style="width:400px; margin-top:10px; margin-left: 150px;">
         {% csrf_token %}
         {% bootstrap_form form %}
          {% buttons %}
@@ -14,5 +15,12 @@
 
       </form>
 
+     <form method="POST">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit tag" />
+</form>
+
         </div>
+    </div>
 {% endblock %}
