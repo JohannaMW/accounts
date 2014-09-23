@@ -14,23 +14,24 @@ Dashboard
 
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="/static/img/month.png" class="img-responsive" alt="Generic placeholder thumbnail">
+              <a href="{% url "chart_exp_choice_month" %}"><img src="/static/img/month.png" class="img-responsive" alt="Generic placeholder thumbnail"></a>
               <h4>Per month</h4>
               <span class="text-muted"></span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="/static/img/year.png" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Per year</h4>
+              <a href="{% url "chart_exp_choice_year" %}"><img src="/static/img/year.png" class="img-responsive" alt="Generic placeholder thumbnail"></a>
+              <h4>Per Year</h4>
               <span class="text-muted"></span>
             </div>
 
               <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="/static/img/relations2.png" class="img-responsive" alt="Generic placeholder thumbnail">
+              <a href="{% url "chart_exp_choice_relation" %}"><img src="/static/img/relations2.png" class="img-responsive" alt="Generic placeholder thumbnail"></a>
               <h4>Spending Patterns</h4>
               <span class="text-muted"></span>
-            </div>
+                </div>
+              </div>
 
-          </div>
+
 
      <h2 class="sub-header">Spendings in {{ month }}</h2>
           <div class="table-responsive">
@@ -53,7 +54,7 @@ Dashboard
                 </tbody>
                 </table>
               </div>
-      </div>
 
 
+</div>
 {% endblock %}

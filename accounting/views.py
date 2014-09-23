@@ -245,23 +245,33 @@ def chart_exp(request):
     expenses = Expense.objects.filter(user=request.user, date__month=month)
     return render(request, 'Charts/chart_exp.html', {'expenses': expenses, 'month' : month})
 
-def chart_exp_choice(request):
+def chart_exp_choice_year(request):
     today = datetime.date.today()
-    month = today.month
-    year = today.year
-    return render(request, 'Charts/chart_exp_choice.html', {'month' : month, 'year':year})
+    return render(request, 'Charts/chart_exp_choice_year.html', {'year': today.year})
 
-def chart_inc_choice(request):
+def chart_exp_choice_month(request):
     today = datetime.date.today()
-    month = today.month
-    year = today.year
-    return render(request, 'Charts/chart_inc_choice.html', {'month' : month, 'year':year})
+    return render(request, 'Charts/chart_exp_choice_month.html', {'month' : today.month, 'year': today.year})
+
+def chart_exp_choice_relation(request):
+    today = datetime.date.today()
+    return render(request, 'Charts/chart_exp_choice_relation.html', {'month' : today.month, 'year': today.year})
+
+def chart_inc_choice_year(request):
+    today = datetime.date.today()
+    return render(request, 'Charts/chart_inc_choice_year.html', {'year': today.year})
+
+def chart_inc_choice_month(request):
+    today = datetime.date.today()
+    return render(request, 'Charts/chart_inc_choice_month.html', {'month' : today.month, 'year': today.year})
+
+def chart_inc_choice_relation(request):
+    today = datetime.date.today()
+    return render(request, 'Charts/chart_inc_choice_relation.html', {'month' : today.month, 'year': today.year})
 
 def chart_cashflow_choice(request):
     today = datetime.date.today()
-    month = today.month
-    year = today.year
-    return render(request, 'Charts/chart_cashflow.html', {'month' : month, 'year':year})
+    return render(request, 'Charts/chart_cashflow.html', {'month' : today.month, 'year': today.year})
 
 
 def chart_inc(request):
@@ -378,6 +388,13 @@ def chart_cashflow_year(request, year):
     return render(request, "Charts/chart_cashflow_year.html", {'cashflowchartyear': cht, 'form':form})
 
 def chart_cashflow_month(request, year, month):
+    form = YearMonthForm(request.POST)
+    if request.method == 'POST':
+        form = YearMonthForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            month=form.cleaned_data['month']
+            return redirect("/charts/cashflow/{}/{}".format(year, month))
     ds = DataPool(
            series=
             [{'options': {'source': DailyExpenses.objects.filter(year=year, month=month, category__isnull=True,
@@ -398,7 +415,7 @@ def chart_cashflow_month(request, year, month):
             chart_options =
               {'title': {'text': 'Cash Flow {}'.format(month)},
                'xAxis': {'title': {'text': 'Day'}}})
-    return render(request, "Charts/chart_cashflow_day.html", {'cashflowchartday': cht})
+    return render(request, "Charts/chart_cashflow_day.html", {'cashflowchartday': cht, 'form':form})
 
 def chart_spendings_categories(request, year):
     form = YearForm(request.POST)
