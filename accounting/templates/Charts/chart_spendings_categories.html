@@ -1,8 +1,19 @@
 {% extends "base.html" %}
+{% load bootstrap3 %}
 {% block header %}
     {% load chartit %}
     {{ spendingchartcat|load_charts:"container" }}
 {% endblock header %}
 {% block content %}
-     <div id='container'> Chart will be rendered here </div>
+     <div id='container' style="margin-top:50px; margin-left:300px; width:650px;"> Chart will be rendered here </div>
+     <form method="post" action="." style="width:400px; margin-left: 400px;">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+         {% buttons %}
+         <button type="submit" class="btn brn-primary">
+             {% bootstrap_icon "star" %} Register
+         </button>
+     {% endbuttons %}
+
+      </form>
 {% endblock %}

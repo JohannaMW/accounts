@@ -21,3 +21,10 @@ class IncomeForm(ModelForm):
 
      class Meta:
          model = Income
+
+class YearForm(forms.Form):
+    year = forms.IntegerField(required=False)
+
+class YearMonthForm(forms.Form):
+    year = forms.IntegerField(required=False)
+    month = forms.IntegerField(required=False)

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from accounting.forms import EmailUserCreationForm, ExpenseForm, IncomeForm
+from accounting.forms import EmailUserCreationForm, ExpenseForm, IncomeForm, YearForm, YearMonthForm
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import authenticate, login
@@ -105,6 +105,13 @@ def add_expenses(request):
 
 @login_required
 def chart_income_type_month(request, type, year, month):
+    form = YearMonthForm(request.POST)
+    if request.method == 'POST':
+        form = YearMonthForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            month=form.cleaned_data['month']
+            return redirect("/charts/income/{}/{}/{}".format(type, year, month))
     incomedata = \
         DataPool(
            series=
@@ -116,12 +123,19 @@ def chart_income_type_month(request, type, year, month):
               [{'options':{ 'type': 'line', 'stacking': False},
                 'terms':{'day': ['amount_income']}}],
             chart_options =
-              {'title': {'text': '{} incomes in {}'.format(type, month)},
+              {'title': {'text': '{} incomes in {}.{}'.format(type, month, year)},
                'xAxis': {'title': {'text': 'Day'}}})
-    return render(request, "Charts/chart_inc_type_month.html", {'incomecharttype': cht})
+    return render(request, "Charts/chart_inc_type_month.html", {'incomecharttype': cht, "form":form})
 
 @login_required
 def chart_inc_month(request, year, month):
+    form = YearMonthForm(request.POST)
+    if request.method == 'POST':
+        form = YearMonthForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            month=form.cleaned_data['month']
+            return redirect("/charts/income/{}/{}".format(year, month))
     incomedata = \
         DataPool(
            series=
@@ -133,12 +147,18 @@ def chart_inc_month(request, year, month):
               [{'options':{ 'type': 'line', 'stacking': False},
                 'terms':{'day': ['amount_income']}}],
             chart_options =
-              {'title': {'text': 'Incomes in {}'.format(month)},
+              {'title': {'text': 'Incomes in {}.{}'.format(month,year)},
                'xAxis': {'title': {'text': 'Day'}}})
-    return render(request, "Charts/chart_inc_month.html", {'incomechart': cht})
+    return render(request, "Charts/chart_inc_month.html", {'incomechart': cht, 'form':form})
 
 @login_required
 def chart_income_type_year(request, type, year):
+    form = YearForm(request.POST)
+    if request.method == 'POST':
+        form = YearForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            return redirect("/charts/income/{}/{}".format(type, year))
     incomedata = \
         DataPool(
            series=
@@ -152,10 +172,16 @@ def chart_income_type_year(request, type, year):
             chart_options = {'title': {'text': '{} income in {}'.format(type, year)},
                'xAxis': {'title': {'text': 'Month'}}})
 
-    return render(request, "Charts/chart_inc_type_year.html", {'incomechartyear_type': cht})
+    return render(request, "Charts/chart_inc_type_year.html", {'incomechartyear_type': cht, 'form' : form})
 
 @login_required
 def chart_inc_year(request, year):
+    form = YearForm(request.POST)
+    if request.method == 'POST':
+        form = YearForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            return redirect("/charts/income/{}".format(year))
     incomedata = \
         DataPool(
            series=
@@ -169,7 +195,7 @@ def chart_inc_year(request, year):
             chart_options = {'title': {'text': 'Income in {}'.format(year)},
                'xAxis': {'title': {'text': 'Month'}}})
 
-    return render(request, "Charts/chart_inc_year.html", {'incomechartyear': cht})
+    return render(request, "Charts/chart_inc_year.html", {'incomechartyear': cht, 'form' : form})
 
 @login_required
 def income_hist(request):
@@ -219,6 +245,25 @@ def chart_exp(request):
     expenses = Expense.objects.filter(user=request.user, date__month=month)
     return render(request, 'Charts/chart_exp.html', {'expenses': expenses, 'month' : month})
 
+def chart_exp_choice(request):
+    today = datetime.date.today()
+    month = today.month
+    year = today.year
+    return render(request, 'Charts/chart_exp_choice.html', {'month' : month, 'year':year})
+
+def chart_inc_choice(request):
+    today = datetime.date.today()
+    month = today.month
+    year = today.year
+    return render(request, 'Charts/chart_inc_choice.html', {'month' : month, 'year':year})
+
+def chart_cashflow_choice(request):
+    today = datetime.date.today()
+    month = today.month
+    year = today.year
+    return render(request, 'Charts/chart_cashflow.html', {'month' : month, 'year':year})
+
+
 def chart_inc(request):
     today = datetime.date.today()
     month = today.month
@@ -227,6 +272,13 @@ def chart_inc(request):
 
 @login_required
 def chart_exp_month_cat(request, year, month, category):
+    form = YearMonthForm(request.POST)
+    if request.method == 'POST':
+        form = YearMonthForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            month=form.cleaned_data['month']
+            return redirect("/charts/expense/{}/{}/{}".format(year, month, category))
     expensedata = \
         DataPool(series=[
             {'options': {'source': DailyExpenses.objects.filter(month=month, year=year, user=request.user, category=category)},
@@ -234,12 +286,19 @@ def chart_exp_month_cat(request, year, month, category):
     cht = Chart(
             datasource = expensedata,
             series_options = [{'options':{ 'type': 'line', 'stacking': False}, 'terms':{'day': ['amount_expenses']}}],
-            chart_options = {'title': {'text': 'Expenses in {}, {}'.format(category, month)},
+            chart_options = {'title': {'text': 'Expenses in {}, {}.{}'.format(category, month, year)},
                'xAxis': {'title': {'text': 'Day'}}})
-    return render(request, "Charts/chart_exp_month_cat.html", {'expensechart_percat': cht})
+    return render(request, "Charts/chart_exp_month_cat.html", {'expensechart_percat': cht, 'form':form})
 
 @login_required
 def chart_exp_month(request, year, month):
+    form = YearMonthForm(request.POST)
+    if request.method == 'POST':
+        form = YearMonthForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            month=form.cleaned_data['month']
+            return redirect("/charts/expense/{}/{}".format(year, month))
     expensedata = \
         DataPool(series=[
             {'options': {'source': DailyExpenses.objects.filter(month=month, year=year, user=request.user, category__isnull=True)},
@@ -247,12 +306,18 @@ def chart_exp_month(request, year, month):
     cht = Chart(
             datasource = expensedata,
             series_options = [{'options':{ 'type': 'line', 'stacking': False}, 'terms':{'day': ['amount_expenses']}}],
-            chart_options = {'title': {'text': 'Expenses in {}'.format(month)},
+            chart_options = {'title': {'text': 'Expenses in {}.{}'.format(month, year)},
                'xAxis': {'title': {'text': 'Day'}}})
-    return render(request, "Charts/chart_exp_month.html", {'expensechart': cht})
+    return render(request, "Charts/chart_exp_month.html", {'expensechart': cht, 'form':form})
 
 @login_required
 def chart_exp_year(request, year):
+    form = YearForm(request.POST)
+    if request.method == 'POST':
+        form = YearForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            return redirect("/charts/expenses/{}".format(year))
     expensedata = \
         DataPool(series= [{'options': {'source': MonthlyExpenses.objects.filter(year=year, category__isnull=True, user=request.user)},
               'terms': ['month','amount_expenses']}])
@@ -262,10 +327,16 @@ def chart_exp_year(request, year):
             chart_options =
               {'title': {'text': 'Expenses in {}'.format(year)}, 'xAxis': {'title': {'text': 'Month'}}})
 
-    return render(request, "Charts/chart_exp_year.html", {'expensechartyear': cht})
+    return render(request, "Charts/chart_exp_year.html", {'expensechartyear': cht, 'form':form})
 
 @login_required
 def chart_exp_year_cat(request, year, category):
+    form = YearForm(request.POST)
+    if request.method == 'POST':
+        form = YearForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            return redirect("/charts/expenses/{}/{}".format(year, category))
     expensedata = \
         DataPool(series= [{'options': {'source': MonthlyExpenses.objects.filter(year=year, category=category, user=request.user)},
               'terms': ['month','amount_expenses']}])
@@ -275,9 +346,15 @@ def chart_exp_year_cat(request, year, category):
             chart_options =
               {'title': {'text': 'Expenses in {}, {}'.format(category, year)}, 'xAxis': {'title': {'text': 'Month'}}})
 
-    return render(request, "Charts/chart_exp_year_cat.html", {'expensechartyear_percat': cht})
+    return render(request, "Charts/chart_exp_year_cat.html", {'expensechartyear_percat': cht, 'form':form})
 
 def chart_cashflow_year(request, year):
+    form = YearForm(request.POST)
+    if request.method == 'POST':
+        form = YearForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            return redirect("/charts/cashflow/{}".format(year))
     ds = DataPool(
            series=
             [{'options': {'source': MonthlyIncome.objects.filter(year=year,
@@ -298,7 +375,7 @@ def chart_cashflow_year(request, year):
             chart_options =
               {'title': {'text': 'Cash Flow {}'.format(year)},
                'xAxis': {'title': {'text': 'Month'}}})
-    return render(request, "Charts/chart_cashflow_year.html", {'cashflowchartyear': cht})
+    return render(request, "Charts/chart_cashflow_year.html", {'cashflowchartyear': cht, 'form':form})
 
 def chart_cashflow_month(request, year, month):
     ds = DataPool(
@@ -324,6 +401,12 @@ def chart_cashflow_month(request, year, month):
     return render(request, "Charts/chart_cashflow_day.html", {'cashflowchartday': cht})
 
 def chart_spendings_categories(request, year):
+    form = YearForm(request.POST)
+    if request.method == 'POST':
+        form = YearForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            return redirect("/charts/expense/categories/{}".format(year))
     ds = PivotDataPool( series= [
        {'options':{ 'source': Expense.objects.filter(date__year=year),
           'categories': 'category__name'},
@@ -332,9 +415,16 @@ def chart_spendings_categories(request, year):
           datasource = ds,
           series_options = [ {'options': {'type': 'column'}, 'terms': ['tot_exp']}],
           chart_options = {'title': {'text':'Expenses by Category {}'.format(year)}})
-    return render(request, "Charts/chart_spendings_categories.html", {'spendingchartcat': pivcht})
+    return render(request, "Charts/chart_spendings_categories.html", {'spendingchartcat': pivcht, 'form' :form})
 
 def chart_spendings_categories_month(request, year, month):
+    form = YearMonthForm(request.POST)
+    if request.method == 'POST':
+        form = YearMonthForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            month=form.cleaned_data['month']
+            return redirect("/charts/expense/categories/{}/{}".format(year, month))
     ds = PivotDataPool( series= [
        {'options':{ 'source': Expense.objects.filter(date__year=year, date__month=month),
           'categories': 'category__name'},
@@ -343,9 +433,15 @@ def chart_spendings_categories_month(request, year, month):
           datasource = ds,
           series_options = [ {'options': {'type': 'column'}, 'terms': ['tot_exp']}],
           chart_options = {'title': {'text':'Expenses by Category {}.0{}'.format(year, month)}})
-    return render(request, "Charts/chart_spendings_categories_month.html", {'spendingchartcat_month': pivcht})
+    return render(request, "Charts/chart_spendings_categories_month.html", {'spendingchartcat_month': pivcht, 'form':form})
 
-def chart_incometype(request, year):
+def chart_income_type(request, year):
+    form = YearForm(request.POST)
+    if request.method == 'POST':
+        form = YearForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            return redirect("/charts/incomes/types/{}".format(year))
     ds = PivotDataPool( series= [
        {'options':{ 'source': Income.objects.filter(date__year=year),
           'categories': 'type__name'},
@@ -354,9 +450,16 @@ def chart_incometype(request, year):
           datasource = ds,
           series_options = [ {'options': {'type': 'column'}, 'terms': ['tot_inc']}],
           chart_options = {'title': {'text':'Income by Type, {}'.format(year)}})
-    return render(request, "Charts/chart_income_type.html", {'incomecharttype': pivcht})
+    return render(request, "Charts/chart_income_type.html", {'incomecharttype': pivcht, "form":form})
 
 def chart_incomes_type_month(request, year, month):
+    form = YearMonthForm(request.POST)
+    if request.method == 'POST':
+        form = YearMonthForm(request.POST)
+        if form.is_valid():
+            year=form.cleaned_data['year']
+            month=form.cleaned_data['month']
+            return redirect("/charts/income/types/{}/{}".format(year, month))
     ds = PivotDataPool( series= [
        {'options':{ 'source': Income.objects.filter(date__year=year, date__month=month),
           'categories': 'type__name'},
@@ -364,6 +467,6 @@ def chart_incomes_type_month(request, year, month):
     pivcht = PivotChart(
           datasource = ds,
           series_options = [ {'options': {'type': 'column'}, 'terms': ['tot_inc']}],
-          chart_options = {'title': {'text':'Income by Type {}.0{}'.format(year, month)}})
-    return render(request, "Charts/chart_income_type_month.html", {'incomecharttype_month': pivcht})
+          chart_options = {'title': {'text':'Income by Type {}.{}'.format(year, month)}})
+    return render(request, "Charts/chart_income_type_month.html", {'incomecharttype_month': pivcht, 'form':form})
 

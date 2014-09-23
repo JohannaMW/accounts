@@ -14,17 +14,17 @@ Dashboard
 
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="/static/img/spandings.png" class="img-responsive" alt="Generic placeholder thumbnail">
+              <a href="{% url "chart_exp" %}"><img src="/static/img/spandings.png" class="img-responsive" alt="Generic placeholder thumbnail"></a>
               <h4>Spendings</h4>
               <span class="text-muted">Check out your spendings!</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="/static/img/income.png" class="img-responsive" alt="Generic placeholder thumbnail">
+              <a href="{% url "chart_inc" %}"><img src="/static/img/income.png" class="img-responsive" alt="Generic placeholder thumbnail"></a>
               <h4>Income</h4>
               <span class="text-muted">Take a look at your income!</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="/static/img/cashflow.png"  class="img-responsive" alt="Generic placeholder thumbnail">
+              <a href="{% url "chart_cashflow_choice" %}"><img src="/static/img/cashflow.png"  class="img-responsive" alt="Generic placeholder thumbnail"></a>
               <h4>Cash Flow</h4>
               <span class="text-muted">What's left? Check out your Cash-Flow!</span>
             </div>
@@ -62,11 +62,5 @@ Dashboard
                 </table>
               </div>
       </div>
-
-
-Your current balance:  {{ total }}<br>
-Income:  {{ total_income }}<br>
-Expenses: {{ total_expenses }}<br>
-
 
 {% endblock %}
