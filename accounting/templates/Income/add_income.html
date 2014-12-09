@@ -4,22 +4,12 @@
     <div class="container">
      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Add Income</h1>
-     <form method="post" action="/income/hist" style="width:400px; margin-top:10px; margin-left: 150px;">
-        {% csrf_token %}
-        {% bootstrap_form form %}
-         {% buttons %}
-         <button type="submit" class="btn brn-primary">
-             {% bootstrap_icon "star" %} Add Income
-         </button>
-     {% endbuttons %}
-
-      </form>
 
      <form method="POST">
     {% csrf_token %}
-    {{ form }}
+    {%  bootstrap_form form %}
     <input type="submit" value="Submit tag" />
-</form>
+    </form>
 
         </div>
     </div>
